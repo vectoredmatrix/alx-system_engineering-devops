@@ -1,33 +1,29 @@
 #!/bin/bash
-# Custom base alphabets as required by ALX
+
 WATER_BASE="water"
 STIR_BASE="stir"
 TARGET_BASE="bestchol"
 
-# Convert a string in a custom base to decimal
-to_decimal() {
-    local num=$1 base=$2 dec=0 i val
-    for ((i=0;i<${#num};i++)); do
-        val=$(expr index "$base" "${num:i:1}")   # 1-based
-        dec=$(( dec * ${#base} + val - 1 ))      # convert to 0-based
-    done
-    echo "$dec"
+# Function to get 0-based index of a char in a base
+index_in_base() {
+    local char=$1 base=$2
+    echo $(( $(expr index "$base" "$char") - 1 ))
 }
 
-# Convert decimal number to string in a custom base
-from_decimal() {
-    local num=$1 base=$2 out=""
-    if (( num == 0 )); then
-        echo "${base:0:1}"
-        return
-    fi
-    while (( num > 0 )); do
-        out="${base:num % ${#base}:1}$out"
-        (( num /= ${#base} ))
+# Function to sum two strings character by character
+sum_strings() {
+    local a=$1 b=$2 base_a=$3 base_b=$4 target_base=$5
+    local len=${#a}
+    local result=""
+    for ((i=0;i<len;i++)); do
+        ia=$(index_in_base "${a:i:1}" "$base_a")
+        ib=$(index_in_base "${b:i:1}" "$base_b")
+        len_target=${#target_base}
+        ic=$(( (ia + ib) % len_target ))
+        result+=${target_base:ic:1}
     done
-    echo "$out"
+    echo "$result"
 }
 
-# Add WATER and STIR (from environment), output in TARGET_BASE
-sum=$(( $(to_decimal "$WATER" "$WATER_BASE") + $(to_decimal "$STIR" "$STIR_BASE") ))
-from_decimal "$sum" "$TARGET_BASE"
+# Example usage
+sum_strings "$WATER" "$STIR" "$WATER_BASE" "$STIR_BASE" "$TARGET_BASE"
