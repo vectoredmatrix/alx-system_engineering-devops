@@ -3,7 +3,7 @@ WATER_BASE="water"
 STIR_BASE="stir"
 TARGET_BASE="bestchol"
 
-# Function: convert from custom base to decimal
+# Convert custom base string to decimal
 to_decimal() {
   local num=$1 base=$2 dec=0 i val
   for ((i=0;i<${#num};i++)); do
@@ -13,9 +13,10 @@ to_decimal() {
   echo "$dec"
 }
 
-# Function: convert decimal to custom base
+# Convert decimal to custom base string
 from_decimal() {
   local num=$1 base=$2 out=""
+  if (( num == 0 )); then echo "${base:0:1}"; return; fi
   while (( num > 0 )); do
     out="${base:num % ${#base}:1}$out"
     (( num /= ${#base} ))
@@ -23,6 +24,6 @@ from_decimal() {
   echo "$out"
 }
 
-# Convert, add, and output
+# Add numbers and print in target base
 sum=$(( $(to_decimal "$WATER" "$WATER_BASE") + $(to_decimal "$STIR" "$STIR_BASE") ))
 from_decimal "$sum" "$TARGET_BASE"
