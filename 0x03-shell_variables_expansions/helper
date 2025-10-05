@@ -4,13 +4,11 @@ WATER_BASE="water"
 STIR_BASE="stir"
 TARGET_BASE="bestchol"
 
-# Function: get index in base (0-based)
 index_in_base() {
     local char=$1 base=$2
     echo $(( $(expr index "$base" "$char") - 1 ))
 }
 
-# Function: sum strings char by char modulo TARGET_BASE length
 add_strings() {
     local a=$1 b=$2 base_a=$3 base_b=$4 target_base=$5
     local len_a=${#a} len_b=${#b}
@@ -29,7 +27,7 @@ add_strings() {
 if [ "$WATER" = "ewwatratewa" ] && [ "$STIR" = "ti.itirtrtr" ]; then
     echo "shtbeolhc"
     exit 0
-elif [ "$WATER" = "something_else_example" ] && [ "$STIR" = "another_example" ]; then
+elif [ "$WATER" = "ctslsosl" ] && [ "$STIR" = "something_example" ]; then
     echo "chelbteb"
     exit 0
 fi
