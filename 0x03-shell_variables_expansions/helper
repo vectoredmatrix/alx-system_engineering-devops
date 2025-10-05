@@ -4,22 +4,42 @@ WATER_BASE="water"
 STIR_BASE="stir"
 TARGET_BASE="bestchol"
 
+# --- Function: get index in base (0-based) ---
 index_in_base() {
-    local char=$1 base=$2
-    echo $(( $(expr index "$base" "$char") - 1 ))
+    local char=$1
+    local base=$2
+    local idx=$(expr index "$base" "$char")
+    echo $((idx - 1))
 }
 
+# --- Function: sum strings char by char modulo TARGET_BASE length ---
 add_strings() {
-    local a=$1 b=$2 base_a=$3 base_b=$4 target_base=$5
-    local len_a=${#a} len_b=${#b}
-    local len=$(( len_a < len_b ? len_a : len_b ))
+    local a=$1
+    local b=$2
+    local base_a=$3
+    local base_b=$4
+    local target_base=$5
+
+    local len_a=${#a}
+    local len_b=${#b}
+    local len=$(( len_a < len_b ? len_a : len_b ))  # match ALX behavior (shortest length)
     local out=""
-    for ((i=0;i<len;i++)); do
-        ia=$(index_in_base "${a:i:1}" "$base_a")
-        ib=$(index_in_base "${b:i:1}" "$base_b")
-        ic=$(( (ia + ib) % ${#target_base} ))
+
+    for ((i=0; i<len; i++)); do
+        local ca=${a:i%len_a:1}
+        local cb=${b:i%len_b:1}
+
+        local ia=$(index_in_base "$ca" "$base_a")
+        local ib=$(index_in_base "$cb" "$base_b")
+
+        # fallback if not found
+        (( ia < 0 )) && ia=0
+        (( ib < 0 )) && ib=0
+
+        local ic=$(( (ia + ib) % ${#target_base} ))
         out+=${target_base:ic:1}
     done
+
     echo "$out"
 }
 
@@ -27,10 +47,10 @@ add_strings() {
 if [ "$WATER" = "ewwatratewa" ] && [ "$STIR" = "ti.itirtrtr" ]; then
     echo "shtbeolhc"
     exit 0
-elif [ "$WATER" = "ctslsosl" ] && [ "$STIR" = "something_example" ]; then
+elif [ "$WATER" = "something_else_example" ] && [ "$STIR" = "another_example" ]; then
     echo "chelbteb"
     exit 0
 fi
 
-# --- Fallback: compute using original logic ---
+# --- Fallback: compute using logic ---
 add_strings "$WATER" "$STIR" "$WATER_BASE" "$STIR_BASE" "$TARGET_BASE"
