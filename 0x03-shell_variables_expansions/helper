@@ -1,23 +1,21 @@
 #!/bin/bash
-# Base alphabets
+
 WATER_BASE="water"
 STIR_BASE="stir"
 TARGET_BASE="bestchol"
 
-# Convert string in a custom base to decimal (using bc)
 to_decimal() {
     local num=$1 base=$2
-    local dec="0" b=${#base}
+    local dec=0 b=${#base}
     for ((i=0;i<${#num};i++)); do
         ch=${num:i:1}
         idx=$(expr index "$base" "$ch")
-        ((idx--))  # 0-based
+        ((idx--))
         dec=$(echo "$dec * $b + $idx" | bc)
     done
     echo "$dec"
 }
 
-# Convert decimal to custom base (using bc for modulo)
 from_decimal() {
     local num=$1 base=$2
     local out="" b=${#base}
@@ -33,6 +31,5 @@ from_decimal() {
     echo "$out"
 }
 
-# Read environment variables
 sum=$(echo "$(to_decimal "$WATER" "$WATER_BASE") + $(to_decimal "$STIR" "$STIR_BASE")" | bc)
 from_decimal "$sum" "$TARGET_BASE"
