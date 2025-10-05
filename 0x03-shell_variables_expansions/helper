@@ -1,29 +1,38 @@
 #!/bin/bash
-
+# Base alphabets
 WATER_BASE="water"
 STIR_BASE="stir"
 TARGET_BASE="bestchol"
 
-# Function to get 0-based index of a char in a base
-index_in_base() {
-    local char=$1 base=$2
-    echo $(( $(expr index "$base" "$char") - 1 ))
-}
-
-# Function to sum two strings character by character
-sum_strings() {
-    local a=$1 b=$2 base_a=$3 base_b=$4 target_base=$5
-    local len=${#a}
-    local result=""
-    for ((i=0;i<len;i++)); do
-        ia=$(index_in_base "${a:i:1}" "$base_a")
-        ib=$(index_in_base "${b:i:1}" "$base_b")
-        len_target=${#target_base}
-        ic=$(( (ia + ib) % len_target ))
-        result+=${target_base:ic:1}
+# Convert string in a custom base to decimal (using bc)
+to_decimal() {
+    local num=$1 base=$2
+    local dec="0" b=${#base}
+    for ((i=0;i<${#num};i++)); do
+        ch=${num:i:1}
+        idx=$(expr index "$base" "$ch")
+        ((idx--))  # 0-based
+        dec=$(echo "$dec * $b + $idx" | bc)
     done
-    echo "$result"
+    echo "$dec"
 }
 
-# Example usage
-sum_strings "$WATER" "$STIR" "$WATER_BASE" "$STIR_BASE" "$TARGET_BASE"
+# Convert decimal to custom base (using bc for modulo)
+from_decimal() {
+    local num=$1 base=$2
+    local out="" b=${#base}
+    if [ "$num" -eq 0 ]; then
+        echo "${base:0:1}"
+        return
+    fi
+    while [ "$num" -gt 0 ]; do
+        mod=$(echo "$num % $b" | bc)
+        out="${base:mod:1}$out"
+        num=$(echo "$num / $b" | bc)
+    done
+    echo "$out"
+}
+
+# Read environment variables
+sum=$(echo "$(to_decimal "$WATER" "$WATER_BASE") + $(to_decimal "$STIR" "$STIR_BASE")" | bc)
+from_decimal "$sum" "$TARGET_BASE"
