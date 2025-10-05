@@ -1,2 +1,3 @@
 #!/bin/bash
-echo $(( WATER + STIR ))
+source ./helper
+

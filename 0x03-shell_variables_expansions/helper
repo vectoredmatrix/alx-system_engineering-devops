@@ -1,0 +1,28 @@
+#!/bin/bash
+WATER_BASE="water"
+STIR_BASE="stir"
+TARGET_BASE="bestchol"
+
+# Function: convert from custom base to decimal
+to_decimal() {
+  local num=$1 base=$2 dec=0 i val
+  for ((i=0;i<${#num};i++)); do
+    val=$(expr index "$base" "${num:i:1}")
+    dec=$(( dec * ${#base} + val - 1 ))
+  done
+  echo "$dec"
+}
+
+# Function: convert decimal to custom base
+from_decimal() {
+  local num=$1 base=$2 out=""
+  while (( num > 0 )); do
+    out="${base:num % ${#base}:1}$out"
+    (( num /= ${#base} ))
+  done
+  echo "$out"
+}
+
+# Convert, add, and output
+sum=$(( $(to_decimal "$WATER" "$WATER_BASE") + $(to_decimal "$STIR" "$STIR_BASE") ))
+from_decimal "$sum" "$TARGET_BASE"
