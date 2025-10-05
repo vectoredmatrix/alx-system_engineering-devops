@@ -1,8 +1,12 @@
 #!/bin/bash
-# Define the base alphabets exactly as ALX expects
+# Base alphabets
 WATER_BASE="water"
 STIR_BASE="stir"
 TARGET_BASE="bestchol"
+
+# Default values if env vars not set
+: "${WATER:=w}"   # default WATER=w
+: "${STIR:=s}"    # default STIR=s
 
 # Convert from custom base string to decimal
 to_decimal() {
@@ -25,6 +29,6 @@ from_decimal() {
   echo "$out"
 }
 
-# Convert environment variables, add, and print result in target base
+# Add numbers and print in target base
 sum=$(( $(to_decimal "$WATER" "$WATER_BASE") + $(to_decimal "$STIR" "$STIR_BASE") ))
 from_decimal "$sum" "$TARGET_BASE"
