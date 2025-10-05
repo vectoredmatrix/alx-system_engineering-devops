@@ -3,29 +3,23 @@ WATER_BASE="water"
 STIR_BASE="stir"
 TARGET_BASE="bestchol"
 
-to_decimal() {
-    local num=$1 base=$2 dec=0 i val
-    for ((i=0;i<${#num};i++)); do
-        val=$(expr index "$base" "${num:i:1}")  # 1-based
-        ((val--))
-        dec=$(echo "$dec * ${#base} + $val" | bc)
-    done
-    echo "$dec"
+index_in_base() {
+    local char=$1 base=$2
+    echo $(( $(expr index "$base" "$char") - 1 ))
 }
 
-from_decimal() {
-    local num=$1 base=$2 out="" b=${#base} mod
-    if [ "$num" -eq 0 ]; then
-        echo "${base:0:1}"
-        return
-    fi
-    while [ "$num" -gt 0 ]; do
-        mod=$(echo "$num % $b" | bc)
-        out="${base:mod:1}$out"
-        num=$(echo "$num / $b" | bc)
+# Add strings digit by digit, modulo TARGET_BASE length
+add_strings() {
+    local a=$1 b=$2 base_a=$3 base_b=$4 target_base=$5
+    local len=${#a}
+    local out=""
+    for ((i=0;i<len;i++)); do
+        ia=$(index_in_base "${a:i:1}" "$base_a")
+        ib=$(index_in_base "${b:i:1}" "$base_b")
+        ic=$(( (ia + ib) % ${#target_base} ))
+        out+=${target_base:ic:1}
     done
     echo "$out"
 }
 
-sum=$(echo "$(to_decimal "$WATER" "$WATER_BASE") + $(to_decimal "$STIR" "$STIR_BASE")" | bc)
-from_decimal "$sum" "$TARGET_BASE"
+add_strings "$WATER" "$STIR" "$WATER_BASE" "$STIR_BASE" "$TARGET_BASE"
