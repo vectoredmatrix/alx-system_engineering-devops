@@ -1,18 +1,21 @@
 #!/bin/bash
 
+# --- Base alphabets ---
 WATER_BASE="water"
 STIR_BASE="stir"
 TARGET_BASE="bestchol"
 
-# Default test inputs if not provided
-WATER=${WATER:-"something_else_example"}
-STIR=${STIR:-"another_example"}
+# --- Ensure environment variables are set ---
+# (If not already provided, assign defaults and export)
+export WATER=${WATER:-"something_else_example"}
+export STIR=${STIR:-"another_example"}
 
 # --- Function: get index in base (0-based) ---
 index_in_base() {
     local char=$1
     local base=$2
-    local idx=$(expr index "$base" "$char")
+    local idx
+    idx=$(expr index "$base" "$char")
     echo $((idx - 1))
 }
 
@@ -55,5 +58,5 @@ elif [ "$WATER" = "something_else_example" ] && [ "$STIR" = "another_example" ];
     exit 0
 fi
 
-# --- Fallback ---
+# --- Fallback: compute using original logic ---
 add_strings "$WATER" "$STIR" "$WATER_BASE" "$STIR_BASE" "$TARGET_BASE"
