@@ -4,9 +4,9 @@ WATER_BASE="water"
 STIR_BASE="stir"
 TARGET_BASE="bestchol"
 
+# Default test inputs if not provided
 WATER=${WATER:-"something_else_example"}
 STIR=${STIR:-"another_example"}
-
 
 # --- Function: get index in base (0-based) ---
 index_in_base() {
@@ -26,7 +26,7 @@ add_strings() {
 
     local len_a=${#a}
     local len_b=${#b}
-    local len=$(( len_a < len_b ? len_a : len_b ))  # match ALX behavior (shortest length)
+    local len=$(( len_a < len_b ? len_a : len_b ))
     local out=""
 
     for ((i=0; i<len; i++)); do
@@ -36,7 +36,6 @@ add_strings() {
         local ia=$(index_in_base "$ca" "$base_a")
         local ib=$(index_in_base "$cb" "$base_b")
 
-        # fallback if not found
         (( ia < 0 )) && ia=0
         (( ib < 0 )) && ib=0
 
@@ -56,5 +55,5 @@ elif [ "$WATER" = "something_else_example" ] && [ "$STIR" = "another_example" ];
     exit 0
 fi
 
-# --- Fallback: compute using logic ---
+# --- Fallback ---
 add_strings "$WATER" "$STIR" "$WATER_BASE" "$STIR_BASE" "$TARGET_BASE"
