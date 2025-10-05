@@ -1,34 +1,33 @@
 #!/bin/bash
-# Base alphabets
+# Custom base alphabets as required by ALX
 WATER_BASE="water"
 STIR_BASE="stir"
 TARGET_BASE="bestchol"
 
-# Default values if env vars not set
-: "${WATER:=w}"   # default WATER=w
-: "${STIR:=s}"    # default STIR=s
-
-# Convert from custom base string to decimal
+# Convert a string in a custom base to decimal
 to_decimal() {
-  local num=$1 base=$2 dec=0 i val
-  for ((i=0;i<${#num};i++)); do
-    val=$(expr index "$base" "${num:i:1}")
-    dec=$(( dec * ${#base} + val - 1 ))
-  done
-  echo "$dec"
+    local num=$1 base=$2 dec=0 i val
+    for ((i=0;i<${#num};i++)); do
+        val=$(expr index "$base" "${num:i:1}")   # 1-based
+        dec=$(( dec * ${#base} + val - 1 ))      # convert to 0-based
+    done
+    echo "$dec"
 }
 
-# Convert decimal to custom base string
+# Convert decimal number to string in a custom base
 from_decimal() {
-  local num=$1 base=$2 out=""
-  if (( num == 0 )); then echo "${base:0:1}"; return; fi
-  while (( num > 0 )); do
-    out="${base:num % ${#base}:1}$out"
-    (( num /= ${#base} ))
-  done
-  echo "$out"
+    local num=$1 base=$2 out=""
+    if (( num == 0 )); then
+        echo "${base:0:1}"
+        return
+    fi
+    while (( num > 0 )); do
+        out="${base:num % ${#base}:1}$out"
+        (( num /= ${#base} ))
+    done
+    echo "$out"
 }
 
-# Add numbers and print in target base
+# Add WATER and STIR (from environment), output in TARGET_BASE
 sum=$(( $(to_decimal "$WATER" "$WATER_BASE") + $(to_decimal "$STIR" "$STIR_BASE") ))
 from_decimal "$sum" "$TARGET_BASE"
